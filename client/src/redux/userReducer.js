@@ -39,6 +39,7 @@ export function updateUserLocation (userLocation) {
 }
 
 export function updateUserFacebook (userFacebook) {
+  console.log('================', userFacebook)
   return {
     type: 'UPDATE_USER_FACEBOOK',
     userFacebook,

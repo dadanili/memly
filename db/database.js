@@ -34,9 +34,8 @@ var storage = multer.diskStorage({
   }
 });
 var upload = multer({ storage: storage });
-
 // Call the below on app to enable it to upload images to database
-module.exports = function(app) {
+module.exports.app = function(app) {
 
   app.post('/api/photo', upload.single('photo'), function(req, res) {
     console.log('--> Request File --> ', req.file);
@@ -85,3 +84,6 @@ module.exports = function(app) {
   });
 
 };
+
+console.log('wahhhhhh', mongoose)
+module.exports.mongoose = mongoose;

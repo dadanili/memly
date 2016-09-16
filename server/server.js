@@ -19,19 +19,32 @@ var createAndSaveNewJourney = require('../db/journey/journeyUtils.js').createAnd
 var Journey = require('../db/journey/journeyModel').journeyModel;
 //------ instantiate app. connect middleware. -----//
 var app = express();
-
-
+var cookieParser = require('cookie-parser'); // the session is stored in a cookie, so we use this to parse it
+console.log('------------------------this is auth', auth)
+auth(app);
 app.use(cors());
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 
+
+app.use(function(req, res, next) {
+  // if now() is after `req.session.cookie.expires`
+  //   regenerate the session
+  if(new Date() > req.session.cookie.expires) {
+    console.log('expired!!')
+
+  }
+  next();
+});
+
+
 // Configure our server with the passport middleware
-auth(app);
+
 
 // This runs our app through some middleware that allows saving to our database
 // CURRENTLY JUST IMAGES ARE CONFIGURED TO BE SAVED
-require('./../db/database')(app);
+require('./../db/database').app(app);
 
 //--- route config ----- //
 
@@ -57,7 +70,7 @@ app.get('/auth/facebook', passport.authenticate('facebook', { scope: authConfig.
 // access was granted, the user will be logged in.  Otherwise,
 // authentication has failed.
 
-app.get('/', function(req, res) {
+app.get('/', helper.isLoggedIn, function(req, res) {
   console.log('AM I HITTING APP.GET?????');
   res.render('index');
 });
@@ -67,7 +80,7 @@ app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: 'http://localhost:3000/#' }),
   function(req, res) {
     //console.log('LOGIN SUCCESS NOW SHOW ME THE USER---------------------->', req.user);
-    //console.log('SHOW ME WHAT THIS SESSION IS------------>', req.session.passport.user);
+    console.log('SHOW ME WHAT THIS SESSION IS------------>', req.session.passport.user);
     res.redirect('http://localhost:3000/#/user/profile/');
   });
 

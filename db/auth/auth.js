@@ -6,18 +6,26 @@ var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var config = require('./config.js');
 var User = require('../users/userModel.js').userModel;
-
 var env = new config.env();
 console.log(env.FACEBOOK_APP_ID);
 console.log(env.FACEBOOK_APP_SECRET);
 console.log(env.callbackURL);
+var MongoStore = require('connect-mongo')(session);
+var mongoose = require('../database.js').mongoose;
 
+console.log('mongooses', mongoose.mongoose)
 module.exports = function(app) {
-  
+  console.log('------------------============================ in AUTO', app)
+
   app.use(session({ 
     secret: 'sneaky diamonds',
     saveUninitialized: true,
-    resave: false
+    store: new MongoStore(
+    {mongooseConnection:mongoose.connection}
+    ),
+    resave: false,
+    expires: new Date(Date.now() + (30 * 86400 * 1000)),
+    cookie: {maxAge:3600000}
   }));
   app.use(passport.initialize());
   app.use(passport.session());
