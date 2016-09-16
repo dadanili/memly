@@ -30,7 +30,7 @@ module.exports = function(app) {
     ),
     resave: false,
     expires: new Date(Date.now() + (30 * 86400 * 1000)),
-    cookie: {maxAge:3600000}
+    // cookie: {maxAge:3600000}
   }));
   app.use(passport.initialize());
   app.use(passport.session());

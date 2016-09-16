@@ -24,8 +24,6 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-
-
 app.use(function(req, res, next) {
   // if now() is after `req.session.cookie.expires`
   //   regenerate the session
