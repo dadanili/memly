@@ -12,6 +12,7 @@ class FirstTimeUserContainer extends React.Component {
 
 
   componentWillMount() {
+    console.log('====================== I AM INSIDE FIRST TIME USER')
     var context = this;
     axios.get('/user/retrieve/profileinfo/')
       .then(function(res) {

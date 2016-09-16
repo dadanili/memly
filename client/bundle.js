@@ -31068,6 +31068,7 @@
 	}
 
 	function updateUserFacebook(userFacebook) {
+	  console.log('================', userFacebook);
 	  return {
 	    type: 'UPDATE_USER_FACEBOOK',
 	    userFacebook: userFacebook
@@ -31855,6 +31856,7 @@
 
 
 	function mapStateToProps(state) {
+	  console.log('----------------------', state.userReducer, state.userReducer.userFacebook);
 	  return {
 	    isLoggedIn: state.userReducer.isLoggedIn,
 	    user: state.userReducer.user,
@@ -62782,8 +62784,8 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'MemlysContainer' },
-	          this.props.selection && this.props.selection.map(function (page) {
-	            return _react2.default.createElement(_presentation2.default, { url: page.imgUrl, order: page.order, addCaption: _this2.addCaption.bind(_this2) });
+	          this.props.selection && this.props.selection.map(function (page, index) {
+	            return _react2.default.createElement(_presentation2.default, { url: page.imgUrl, order: index, addCaption: _this2.addCaption.bind(_this2) });
 	          })
 	        )
 	      );
