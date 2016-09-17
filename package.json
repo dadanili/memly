@@ -56,7 +56,9 @@
     "react-router": "^2.7.0",
     "react-slick": "^0.14.3",
     "redux": "^3.6.0",
+    "request": "^2.74.0",
     "slick-carousel": "^1.6.0",
+    "watson-developer-cloud": "^2.3.2",
     "webpack": "^1.13.2"
   },
   "devDependencies": {

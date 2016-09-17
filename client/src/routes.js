@@ -14,6 +14,7 @@ import SelectionContainer from './components/createJourney/selection/container';
 import CaptionContainer from './components/createJourney/addCaption/container'
 import TitleContainer from './components/createJourney/addTitle/container'
 import Title2Container from './components/createJourney/addTitle/titleContainer'
+import RecommendationContainer from './components/createJourney/recommendations/container'
 import axios from 'axios'
 
 
@@ -32,6 +33,8 @@ var routes = (
       <Route path='/photo' component={ImageUploadContainer}/>
       <Route path='/selection' component={SelectionContainer} />
       <Route path='/addcaptions' component={CaptionContainer} />
+      <Route path='/recommendations' component={RecommendationContainer} />
+
       <Route component={TitleContainer}>
         <Route path='/addtitle' component={Title2Container} />
       </Route>
