@@ -79,9 +79,9 @@ const Profile = (props) => {
 
     <Row id = "MemlyNavSelector">
       <span className="MemlyNavItem"><Link to ="user/profile" id="MemlyNavItemText">My Memlys ></Link></span>
-      <span className="MemlyNavItem"><Link to = "/journeys" className="MemlyNavItemText2">My Journeys ></Link></span>
-      <span className="MemlyNavItem"><Link to ="/likedmemlys" className="MemlyNavItemText2">Memlys I Like ></Link></span>
-      <span className="MemlyNavItel"><Link to="/likedjourneys" className="MemlyNavItemText2">Journeys I Like ></Link></span>
+      <span className="MemlyNavItem"><Link to = "/journeys" id="MemlyNavItemText2">My Journeys ></Link></span>
+      <span className="MemlyNavItem"><Link to ="/likedmemlys" id="MemlyNavItemText2">Memlys I Like ></Link></span>
+      <span className="MemlyNavItel"><Link to="/likedjourneys" id="MemlyNavItemText2">Journeys I Like ></Link></span>
       <span className="MemlyNavItem"><Link to ="/edit" id="MemlyNavItemText3">Edit Profile ></Link></span>
        
     </Row>

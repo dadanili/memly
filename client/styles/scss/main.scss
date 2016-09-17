@@ -11,9 +11,12 @@ which is where index.html points to
   font-weight: 100;
 }
 
+.nav a {
+  color: white;
+}
+
 a, a:link, a:hover, a:active, a:visited {
   text-decoration: none;
-  color: white;
 }
 
 a:hover {
@@ -441,4 +444,51 @@ ul {
   background-color: #f6f6f6;
   box-shadow: 0 0px 4px rgba(120, 120, 120, 0.6);
 }
+
+#disabledCursor { 
+  cursor: default; 
+  pointer-events: auto;
+  background-color: #e7e7e7; 
+  color: black;
+}
+
+.nearby-journeys-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 400px;
+  min-height: 1000px;
+  z-index: 2;
+}
+
+.nearbyBox {
+  padding: 0;
+}
+
+.nearbyBox p {
+  font-size: 20px;
+  background-color: #50E3C2;
+  color: white;
+  font-weight: 400;
+}
+
+.nearbyContainer {
+  border: none;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 1px solid #e1e8ed; 
+  box-shadow: -3px 3px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  padding-bottom: 4px;
+}
+
+.oneJourney {
+  margin: auto;
+  box-shadow: -1px 1px rgba(80, 227, 194, 0.4);
+} 
 
