@@ -31155,7 +31155,8 @@
 	  selection: [],
 	  pageIndex: 0,
 	  currentJourney: {},
-	  recommendations: []
+	  recommendations: [],
+	  query: ''
 	};
 
 	// ------------ USER REDUCER -----------------//
@@ -31164,7 +31165,12 @@
 	  var action = arguments[1];
 
 	  switch (action.type) {
-
+	    case 'WATSON_QUERY_PERSONALITY':
+	      {
+	        return _extends({}, state, {
+	          query: action.query
+	        });
+	      }
 	    case 'PHOTO_RECOMMENDATIONS':
 	      {
 	        return _extends({}, state, {
@@ -65358,6 +65364,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -65390,7 +65398,7 @@
 	      });
 	      var path = '/recommendations';
 	      _reactRouter.hashHistory.push(path);
-
+	      var context = this;
 	      console.log('this.props.selection', this.props.selection);
 
 	      _axios2.default.get('/user/retrieve/similarPhotos', { params: { urls: this.props.selection.map(function (page) {
@@ -65401,7 +65409,62 @@
 	          return image.images[0].classifiers[0].classes;
 	        });
 	        console.log('data', data);
+	        var string = '';
+	        var queryString = data.map(function (item) {
+	          item.map(function (trait) {
+	            string = string + ' ' + trait.class;
+	          });
+	        });
+	        console.log('similarPhotos queryString', string);
+	        _App2.default.dispatch({
+	          type: 'WATSON_QUERY_PERSONALITY',
+	          query: context.props.query + ' ' + string
+	        });
 	      });
+
+	      _axios2.default.get('/user/retrieve/personality', { params: { captions: this.props.selection.map(function (page) {
+	            return page.caption;
+	          }) } }).then(function (response) {
+	        console.log('personality in client', response.data.tree.children);
+	        var categories = response.data.tree.children;
+	        console.log('CATEGORIES', categories);
+	        var personality = categories[0].children.map(function (personality) {
+	          return { main: personality.name, sub: personality.children.map(function (child) {
+	              return child.name;
+	            }) };
+	        });
+	        var needs = categories[1].children.map(function (personality) {
+	          return { main: personality.name, sub: personality.children.map(function (child) {
+	              return child.name;
+	            }) };
+	        });
+	        var values = categories[2].children.map(function (personality) {
+	          return { main: personality.name, sub: personality.children.map(function (child) {
+	              return child.name;
+	            }) };
+	        });
+	        console.log('1', personality, '2', needs, '3', values);
+	        var queryString = categories[0].children.map(function (personality) {
+	          return _defineProperty({ main: [personality.name] }, 'main', personality.children.map(function (child) {
+	            return child.name;
+	          }));
+	        });
+
+	        var string = '';
+	        queryString.map(function (cat) {
+	          cat.main.forEach(function (str) {
+	            string = string + ' ' + str;
+	          });
+	        });
+
+	        console.log('query string', string, context.props.query);
+
+	        _App2.default.dispatch({
+	          type: 'WATSON_QUERY_PERSONALITY',
+	          query: context.props.query + ' ' + string
+	        });
+	      });
+
 	      // return image.images[0].classes.map(class =>{ return class['class']})
 	    }
 	  }, {
@@ -65441,6 +65504,7 @@
 
 	function mapStateToProps(state) {
 	  return {
+	    query: state.userReducer.query,
 	    selection: state.userReducer.selection
 	  };
 	}
@@ -65915,10 +65979,11 @@
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
+	      var context = this;
+
 	      this.geolocate(function (location) {
-	        var context = this;
 	        // console.log('dani', this.props.location)
-	        _axios2.default.get('/user/recommendations', { params: { location: location } }).then(function (res) {
+	        _axios2.default.get('/user/recommendations', { params: { location: location, query: context.props.query } }).then(function (res) {
 
 	          var urlList = res.data.photos.photo.map(function (photo) {
 	            return 'http://c' + photo.farm + '.staticflickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '.jpg';
@@ -65981,6 +66046,7 @@
 
 	function mapStateToProps(state) {
 	  return {
+	    query: state.userReducer.query,
 	    recommendations: state.userReducer.recommendations,
 	    // location: state.userReducer.userLocation,
 	    selection: state.userReducer.selection

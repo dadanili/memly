@@ -49,10 +49,11 @@ class RecommendationContainer extends Component {
   }
 
   componentDidMount() {
+    var context = this;
+
     this.geolocate(function(location) {
-      var context = this;
       // console.log('dani', this.props.location)
-      axios.get('/user/recommendations', {params:{location: location}})
+      axios.get('/user/recommendations', {params:{location: location, query: context.props.query}})
       .then(res=>{
 
         var urlList = res.data.photos.photo.map(photo=> {
@@ -102,6 +103,7 @@ class RecommendationContainer extends Component {
 
 function mapStateToProps(state) {
   return {
+    query: state.userReducer.query,
     recommendations: state.userReducer.recommendations,
     // location: state.userReducer.userLocation,
     selection: state.userReducer.selection

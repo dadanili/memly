@@ -88,13 +88,13 @@ var getPhotos = function(req, res) {
     // if (!error && response.statusCode == 200) {
       var start = body.indexOf('woeid');
       var woeid = body.slice(start +7, start + 15);
-
+      console.log('-------------in get photo------------------', req.query.query)
     request({
         url: 'https://api.flickr.com/services/rest/?', 
         qs: {method: 'flickr.photos.search', 
         api_key: watsonKeys.flickerKey.Key, 
         woeid: woeid, 
-        text: 'fun egg', 
+        text: req.query.query, 
         radius: 1,
         format: 'json',
         radius_units: 'mi',
@@ -128,6 +128,26 @@ app.get('/user/retrieve/similarPhotos', function(req, res){
   
 });
 
+app.get('/user/retrieve/personality', function(req, res){
+
+  console.log('in server similarPhotos =================', req.query.captions)
+  var allInfo = [];
+  var text = '';
+  for(var i = 0; i < 50; i++) {
+
+  req.query.captions.forEach(cap=>{text = text + ' ' + cap});
+}
+  console.log('text==================', text)
+
+  console.log('text=================2=', text)
+  watsonFunctions.runPersonalityInsight(text, function(data) {
+    console.log('got data from Watson!!!!', data),
+  
+      res.send(data)
+
+  })
+  
+});
 
 app.get('/user/recommendations', function(req, res){
   getPhotos(req, res)

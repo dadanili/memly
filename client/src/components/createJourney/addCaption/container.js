@@ -28,7 +28,7 @@ class CaptionContainer extends Component {
     })
     const path = '/recommendations'
     hashHistory.push(path);
-
+    var context = this;
     console.log('this.props.selection', this.props.selection)
 
     axios.get('/user/retrieve/similarPhotos', {params: {urls: this.props.selection.map(page=>page.imgUrl)}})
@@ -36,7 +36,40 @@ class CaptionContainer extends Component {
       console.log('similarPhotos', res);
       var data = res.data.map(image=>image.images[0].classifiers[0].classes);
       console.log('data', data)
+      var string = '';
+      var queryString = data.map(item=>{ item.map(trait=> {string = string +' '+ trait.class})} )
+      console.log('similarPhotos queryString', string)
+      store.dispatch({
+       type: 'WATSON_QUERY_PERSONALITY',
+       query: context.props.query + ' ' + string
+      })
+
     })
+
+    axios.get('/user/retrieve/personality', {params: {captions: this.props.selection.map(page=>page.caption)}})
+    .then(function(response) {
+      console.log('personality in client', response.data.tree.children);
+      var categories = response.data.tree.children;
+      console.log('CATEGORIES', categories)
+     var personality = categories[0].children.map(personality=>{return {main:personality.name, sub: personality.children.map(child=>child.name)}});
+     var needs = categories[1].children.map(personality=>{return {main:personality.name, sub: personality.children.map(child=>child.name)}});
+     var values = categories[2].children.map(personality=>{return {main:personality.name, sub: personality.children.map(child=>child.name)}});
+     console.log('1', personality, '2', needs,'3', values)
+     var queryString = categories[0].children.map(personality=>{return {main:[personality.name], main: personality.children.map(child=>child.name)}});
+     
+     var string = '';
+      queryString.map(cat=>{cat.main.forEach(str=>{string = string + ' ' + str} )})
+
+      console.log('query string', string, context.props.query)
+
+     store.dispatch({
+      type: 'WATSON_QUERY_PERSONALITY',
+      query: context.props.query + ' ' + string
+     })
+
+
+    })
+
     // return image.images[0].classes.map(class =>{ return class['class']})
 
   }
@@ -66,6 +99,7 @@ class CaptionContainer extends Component {
 
 function mapStateToProps(state) {
   return {
+   query: state.userReducer.query,
     selection: state.userReducer.selection
   }
 }

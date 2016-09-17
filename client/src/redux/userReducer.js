@@ -118,12 +118,18 @@ const userInitialState = {
   nearbyJourneys: [],
   favouriteJourneys: [],
   recommendations: []
+  query: ''
 }
 
 // ------------ USER REDUCER -----------------//
 export default function userReducer (state = userInitialState, action) {
   switch(action.type){
-
+   case 'WATSON_QUERY_PERSONALITY' : {
+     return {
+       ...state, 
+       query: action.query
+     }
+   }
    case 'PHOTO_RECOMMENDATIONS' : {
      return {
        ...state, 

@@ -100,14 +100,16 @@ var runPersonalityInsight = function(text, callback) {
     // text: 'Learn how to think like a software engineer You can get a great start to learning code by using online resources, but there is a lot more to working in software engineering than writing code. At Hack Reactor’s software career accelerator, you will also learn CS fundamentals and engineering best practices.Our Goal: You’ll begin Hack Reactor with a feeling of excitement and anticipation. Twelve weeks later, you’ll follow the footsteps of our trailblazing alumni, taking the methodologies and best practices you perfected at our coding bootcamp to your next job. We’ve built world class software engineering curriculum and programming courses. However, Hack Reactor is, above all else, a world-class learning environment.',
     language: 'en' },
     function (err, response) {
+      console.log('OMG GOT RESPONSE FROM WATSON', response)
       if (err)
         console.log('error:', err);
       else {
-        var categories = response.tree.children.map(cat=>{cat});
-        var personality = categories[0].children.map(personality=>{return {main:personality.name, sub: personality.children.map(child=>child.name)}});
-        var needs = categories[1].children.map(personality=>{return {main:personality.name, sub: personality.children.map(child=>child.name)}});
-        var values = categories[2].children.map(personality=>{return {main:personality.name, sub: personality.children.map(child=>child.name)}});
-        console.log('1', personality, '2', needs,'3', values)
+        callback(response);
+        // var categories = response.tree.children.map(cat=>{cat});
+        // var personality = categories[0].children.map(personality=>{return {main:personality.name, sub: personality.children.map(child=>child.name)}});
+        // var needs = categories[1].children.map(personality=>{return {main:personality.name, sub: personality.children.map(child=>child.name)}});
+        // var values = categories[2].children.map(personality=>{return {main:personality.name, sub: personality.children.map(child=>child.name)}});
+        // console.log('1', personality, '2', needs,'3', values)
       }
   });
 }
