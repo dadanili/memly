@@ -21,9 +21,7 @@ const TitlePresentation = (props) => {
         <div className="oneMemlyWrapper"></div>
       </div>
       <div>
-        testing testing 123
         Caption: {props.caption}
-      
       </div>
     </div>
   );

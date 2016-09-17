@@ -16,8 +16,6 @@ class Title2Container extends Component {
   }
 
   componentDidMount() {
-    var dani = this.props.selection
-    console.log('userReducer', dani)
   }
 
   submit(e) {
@@ -35,20 +33,20 @@ class Title2Container extends Component {
   }
 
   render() {
-
-    return(
-
-      <div>
+    return (
+      <div className = "ProfileBoxes">
+        <div className = "MemlysContainer">
           {this.props.selection && this.props.selection.map(page=> <TitlePresentation url={page.imgUrl} order={page.order} caption= {page.caption}/>)}
+        </div>
       </div>
-    )
+    );
   }
 }
 
 function mapStateToProps(state) {
   return {
     selection: state.userReducer.selection
-  }
+  };
 }
 
 export default connect(mapStateToProps)(Title2Container)
