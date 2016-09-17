@@ -95,7 +95,7 @@ class SelectionContainer extends Component {
 
     return(
       <div className = "ProfileBoxes">
-       <button type="submit" className = "editProfileButton'" value="submit" onClick={this.submit.bind(this)} ref={(c) => this.button = c} >Submit</button>
+       <button type="submit" className="editProfileButton" value="submit" onClick={this.submit.bind(this)} ref={(c) => this.button = c} >Submit</button>
 
         <div className ="MemlysContainer">
           {this.props.memlys && this.props.memlys.map((url) => <SelectionPresentation url={url} select={this.select.bind(this)} />)}

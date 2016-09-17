@@ -590,6 +590,18 @@ ul {
 .memlyPhoto:hover {
   border: 1px solid black; }
 
+.journeyCaptionInput {
+  display: block;
+  border-radius: 4px;
+  border: 1px solid #8c8c8c;
+  padding-left: 1%;
+  margin-top: 1.5%;
+  height: 3em;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
 #EditProfileContainer {
   margin: 5%; }
 
@@ -730,4 +742,10 @@ ul {
 
 .oneJourney {
   margin: auto;
-  box-shadow: -1px 1px rgba(80, 227, 194, 0.4); }
+  box-shadow: -1px 1px rgba(80, 227, 194, 0.4);
+}
+.hideBorder {
+  border: none; }
+
+.hideBorder:hover {
+  border: none; }
