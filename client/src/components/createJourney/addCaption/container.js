@@ -41,7 +41,10 @@ class CaptionContainer extends Component {
 
     return(
       <div className = "ProfileBoxes">
-       <button type="submit" className = "editProfileButton'" value="submit" onClick={this.submit.bind(this)} ref={(c) => this.button = c} >Submit</button>
+        <div>
+          <button type="submit" className = "createJourneyButton" value="submit" onClick={this.submit.bind(this)} ref={(c) => this.button = c} >Submit</button>
+          <div className="sub-title">Add Captions</div>
+        </div>
         <div className ="MemlysContainer">
           {this.props.selection && this.props.selection.map((page, index)=> <CaptionPresentation url={page.imgUrl} order={index} addCaption={this.addCaption.bind(this)}/>)}
         </div>

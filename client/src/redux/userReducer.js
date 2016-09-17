@@ -255,7 +255,7 @@ export default function userReducer (state = userInitialState, action) {
       if (action.callfrom === "myJourneys") {
         return {
           ...state,
-          currentJourney: state.myJourneys[action.journeyIndex]
+          currentJourney: state.journeys[action.journeyIndex]
         }
       } else {
         return {

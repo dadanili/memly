@@ -14,7 +14,7 @@ const MyJourneys = (props) => {
       <div className="oneMemlyWrapper">
       </div>
     </div>
-  )
+  );
 };
 
 export default MyJourneys;
