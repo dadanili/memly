@@ -49,9 +49,9 @@ class TitleContainer extends Component {
 
       <div className = "ProfileBoxes">
 
-       <button type="submit" className = "editProfileButton" value="submit" onClick={this.submit.bind(this)} ref={(c) => this.button = c} >Submit</button>
-        <div>
-          <strong>Title: </strong><input size="100" onChange= {e=>this.addTitle(e)}/>
+        <div className="createJourneyTitleBar">
+          <button type="submit" className="createJourneyButton" value="submit" onClick={this.submit.bind(this)} ref={(c) => this.button = c} >Submit</button>
+          <strong className="twoEms">Title: </strong><input className="twoEms" onChange= {e=>this.addTitle(e)}/>
         </div>
 
         <div className ="MemlysContainer">
