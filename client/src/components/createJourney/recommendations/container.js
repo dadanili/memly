@@ -13,6 +13,7 @@ class RecommendationContainer extends Component {
 
   constructor(props) {
     super(props);
+    this.pages = [];
   }
   componentWillMount() {
   }
@@ -69,10 +70,10 @@ class RecommendationContainer extends Component {
   }
 
   submit(e) {
-    console.log('in submit')
+    console.log('in submit', this.pages, this.props.selection)
     this.props.dispatch({
         type: 'SELECTED_MEMLYS', 
-        selection: this.props.selection
+        selection: this.props.selection.concat(this.pages)
     })
     const path = '/addtitle'
     hashHistory.push(path)
@@ -84,8 +85,50 @@ class RecommendationContainer extends Component {
     page.caption = e.target.value;
 
   }
-          // {this.props.selection && this.props.selection.map((page, index)=> <CaptionPresentation url={page.imgUrl} order={index} addCaption={this.addCaption.bind(this)}/>)}
 
+select(e) {
+    // console.log('in select event', e.target.getAttribute('data-url');
+      var url = e.target.getAttribute('data-url');
+      var selected = e.target.getAttribute('data-selected');
+
+      if (selected === 'false') {
+        e.target.style.opacity = '0.5';
+
+        var page = {
+          order: this.currOrder,
+          imgUrl: url
+        }
+
+        e.target.childNodes[0].nodeValue = 'dani';
+
+        this.button.disabled = false;
+        this.button.style.backgroundColor = 'lightGreen';
+        this.currOrder++;
+        this.pages.push(page);
+        e.target.setAttribute('data-selected', 'true');
+
+      } else {
+        e.target.style.opacity = '1';
+        var removeIndex = -1;
+        this.pages.forEach(page => {
+          if(page.imgUrl === url) {
+            removeIndex = this.pages.indexOf(page);
+          }
+        })
+        this.pages.splice(removeIndex, 1);
+
+        e.target.setAttribute('data-selected', 'false');
+        this.currOrder--;
+        for (var i = 0; i < this.pages.length; i++) {
+          this.pages[i].order = i;
+        }
+        console.log('length', this.pages.length)
+        if (this.pages.length === 0) {
+          this.button.disabled = true;
+          this.button.style.backgroundColor = 'initial';
+        }
+      }
+  }
 
   render() {
 
@@ -93,7 +136,7 @@ class RecommendationContainer extends Component {
       <div className = "ProfileBoxes">
        <button type="submit" className = "editProfileButton'" value="submit" onClick={this.submit.bind(this)} ref={(c) => this.button = c} >Submit</button>
         <div className ="MemlysContainer">
-          {this.props.recommendations && this.props.recommendations.map(rec=> <RecommendationPresentation url= {rec} />)}
+          {this.props.recommendations && this.props.recommendations.map(rec=> <RecommendationPresentation url= {rec} select={this.select.bind(this)} />)}
         </div>
       </div>
     )

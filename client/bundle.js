@@ -65637,6 +65637,11 @@
 	    value: function componentDidMount() {
 	      var props = this.props.selection;
 	      console.log('userReducer', props);
+	      var order = 0;
+	      this.props.selection.forEach(function (page) {
+	        page.order = order++;
+	      });
+	      console.log('OMG SLECTIONS', this.props.selection);
 	    }
 	  }, {
 	    key: 'select',
@@ -65936,7 +65941,10 @@
 	  function RecommendationContainer(props) {
 	    _classCallCheck(this, RecommendationContainer);
 
-	    return _possibleConstructorReturn(this, (RecommendationContainer.__proto__ || Object.getPrototypeOf(RecommendationContainer)).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (RecommendationContainer.__proto__ || Object.getPrototypeOf(RecommendationContainer)).call(this, props));
+
+	    _this.pages = [];
+	    return _this;
 	  }
 
 	  _createClass(RecommendationContainer, [{
@@ -65998,10 +66006,10 @@
 	  }, {
 	    key: 'submit',
 	    value: function submit(e) {
-	      console.log('in submit');
+	      console.log('in submit', this.pages, this.props.selection);
 	      this.props.dispatch({
 	        type: 'SELECTED_MEMLYS',
-	        selection: this.props.selection
+	        selection: this.props.selection.concat(this.pages)
 	      });
 	      var path = '/addtitle';
 	      _reactRouter.hashHistory.push(path);
@@ -66012,13 +66020,56 @@
 	      var page = this.props.selection[order];
 	      page.caption = e.target.value;
 	    }
-	    // {this.props.selection && this.props.selection.map((page, index)=> <CaptionPresentation url={page.imgUrl} order={index} addCaption={this.addCaption.bind(this)}/>)}
+	  }, {
+	    key: 'select',
+	    value: function select(e) {
+	      var _this3 = this;
 
+	      // console.log('in select event', e.target.getAttribute('data-url');
+	      var url = e.target.getAttribute('data-url');
+	      var selected = e.target.getAttribute('data-selected');
 
+	      if (selected === 'false') {
+	        e.target.style.opacity = '0.5';
+
+	        var page = {
+	          order: this.currOrder,
+	          imgUrl: url
+	        };
+
+	        e.target.childNodes[0].nodeValue = 'dani';
+
+	        this.button.disabled = false;
+	        this.button.style.backgroundColor = 'lightGreen';
+	        this.currOrder++;
+	        this.pages.push(page);
+	        e.target.setAttribute('data-selected', 'true');
+	      } else {
+	        e.target.style.opacity = '1';
+	        var removeIndex = -1;
+	        this.pages.forEach(function (page) {
+	          if (page.imgUrl === url) {
+	            removeIndex = _this3.pages.indexOf(page);
+	          }
+	        });
+	        this.pages.splice(removeIndex, 1);
+
+	        e.target.setAttribute('data-selected', 'false');
+	        this.currOrder--;
+	        for (var i = 0; i < this.pages.length; i++) {
+	          this.pages[i].order = i;
+	        }
+	        console.log('length', this.pages.length);
+	        if (this.pages.length === 0) {
+	          this.button.disabled = true;
+	          this.button.style.backgroundColor = 'initial';
+	        }
+	      }
+	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this3 = this;
+	      var _this4 = this;
 
 	      return _react2.default.createElement(
 	        'div',
@@ -66026,7 +66077,7 @@
 	        _react2.default.createElement(
 	          'button',
 	          { type: 'submit', className: 'editProfileButton\'', value: 'submit', onClick: this.submit.bind(this), ref: function ref(c) {
-	              return _this3.button = c;
+	              return _this4.button = c;
 	            } },
 	          'Submit'
 	        ),
@@ -66034,7 +66085,7 @@
 	          'div',
 	          { className: 'MemlysContainer' },
 	          this.props.recommendations && this.props.recommendations.map(function (rec) {
-	            return _react2.default.createElement(_presentation2.default, { url: rec });
+	            return _react2.default.createElement(_presentation2.default, { url: rec, select: _this4.select.bind(_this4) });
 	          })
 	        )
 	      );

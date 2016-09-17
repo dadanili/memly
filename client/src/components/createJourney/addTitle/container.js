@@ -18,6 +18,9 @@ class TitleContainer extends Component {
   componentDidMount() {
     var props = this.props.selection
     console.log('userReducer', props)
+    var order = 0;
+    this.props.selection.forEach(page=> { page.order = order++;})
+    console.log('OMG SLECTIONS', this.props.selection)
   }
 
   select(e) {
