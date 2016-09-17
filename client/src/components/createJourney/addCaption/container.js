@@ -27,8 +27,18 @@ class CaptionContainer extends Component {
         selection: this.props.selection
     })
     const path = '/recommendations'
-    hashHistory.push(path)
-    
+    hashHistory.push(path);
+
+    console.log('this.props.selection', this.props.selection)
+
+    axios.get('/user/retrieve/similarPhotos', {params: {urls: this.props.selection.map(page=>page.imgUrl)}})
+    .then(function(res) {
+      console.log('similarPhotos', res);
+      var data = res.data.map(image=>image.images[0].classifiers[0].classes);
+      console.log('data', data)
+    })
+    // return image.images[0].classes.map(class =>{ return class['class']})
+
   }
 
   addCaption(e, url, order) {

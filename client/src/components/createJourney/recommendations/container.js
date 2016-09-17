@@ -54,8 +54,6 @@ class RecommendationContainer extends Component {
       // console.log('dani', this.props.location)
       axios.get('/user/recommendations', {params:{location: location}})
       .then(res=>{
-        // https://c1.staticflickr.com/83/250384910_e540fceb2f_o.jpg
-        // https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}_[mstzb].jpg
 
         var urlList = res.data.photos.photo.map(photo=> {
           return `http://c${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}.jpg`

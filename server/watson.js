@@ -1,32 +1,68 @@
 //Watson test
 var watson = require('watson-developer-cloud');
 var watsonKeys = require('../db/watson/keys.js');
+var request = require('request');
+var fs = require('fs');
+var path = require('path');
 
-var runVisualRecognition = function(url) {
+var runVisualRecognition = function(url, callback) {
 
   var VisualRecognitionV3 = require('watson-developer-cloud/visual-recognition/v3');
-  var fs = require('fs');
   var visual_recognition = new VisualRecognitionV3({
     api_key: watsonKeys.visualKey['api_key'],
     version_date: '2016-05-19'
   });
-  console.log('=========================',path.join(__dirname, './meprofile.png'))
-  var params = {
-    images_file: fs.createReadStream(url)
-    // images_file: fs.createReadStream(path.join(__dirname, '/../server/images/dog.png'))
-  };
+  var write = fs.createWriteStream(path.join(__dirname, 'grabimage.png'));
 
-  visual_recognition.classify(params, function(err, res) {
-    if (err) {
-      console.log(err);
-    }
-    else{
-      console.log(JSON.stringify(res, null, 2));
-    }
-  });
+  // var file = ''
+  console.log('url==', url)
+  // request
+  // write.on('finish', function(){
+    console.log('omg in write finish')
+    // request(url).pipe(write)
+
+    var stream = request(url).pipe(write)
+
+    stream.on('finish', function(){
+      console.log('FINISHED-------------------------------')
+
+          var file = path.join(__dirname, 'grabimage.png')
+
+        // console.log('=========================',path.join(__dirname, './meprofile.png'))
+        var params = {
+          // request(url).pipe(fs.createWriteStream(exports.paths.archivedSites + '/' + url));
+          images_file: fs.createReadStream(file)
+          // images_file: fs.createReadStream(path.join(__dirname, '/../server/images/dog.png'))
+        };
+        console.log('params', params)
+
+
+        visual_recognition.classify(params, function(err, res) {
+          if (err) {
+            console.log(err);
+          }
+          else{
+            console.log('===============', JSON.stringify(res, null, 2));
+            callback(res);
+
+          }
+        });
+    })
+      
+    // })
+
+
+  // })
+  // console.log('IN WATSON FILE:', path.join(__dirname, 'grabimage'))
+  
+
+  // request('http://fromrussiawithlove.com/baby.mp3').pipe(fs.createWriteStream('song.mp3'))
+
+
+
 }
 
-var runLanguageProcessig = function(text) {
+var runLanguageProcessig = function(text, callback) {
 
   var AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');
 
@@ -43,13 +79,14 @@ var runLanguageProcessig = function(text) {
     if (err)
       console.log('error:', err);
     else
+      callback(response)
       console.log('==========', JSON.stringify(response, null, 2));
   });
 
 }
 
   // curl -X POST -F "image_file=@red_dress.jpg" "https://gateway-a.watsonplatform.net/visual-recognition/api/v3/collections/{collection_id}/find_similar?limit=100&api_key={api-key}&version=2016-05-20"
-var runPersonalityInsight = function(text) {
+var runPersonalityInsight = function(text, callback) {
   var PersonalityInsightsV2 = require('watson-developer-cloud/personality-insights/v2');
 
   var personality_insights = new PersonalityInsightsV2({

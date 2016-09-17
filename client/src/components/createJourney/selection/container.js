@@ -32,7 +32,10 @@ class SelectionContainer extends Component {
         type: 'USER_LIST_MEMLYS',
         memlys: list
       });
+
+
     });
+
 
   }
 
@@ -87,6 +90,7 @@ class SelectionContainer extends Component {
         type: 'SELECTED_MEMLYS', 
         selection: this.pages
       })
+
       const path = '/addcaptions'
       hashHistory.push(path)
   }

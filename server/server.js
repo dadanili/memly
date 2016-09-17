@@ -19,6 +19,7 @@ var createAndSaveNewJourney = require('../db/journey/journeyUtils.js').createAnd
 var Journey = require('../db/journey/journeyModel').journeyModel;
 var watson = require('watson-developer-cloud');
 var watsonKeys = require('../db/watson/keys.js');
+var watsonFunctions = require('./watson.js')
 var GoogleMap = require('google-map-react');
 
 //------ instantiate app. connect middleware. -----//
@@ -110,8 +111,30 @@ var getPhotos = function(req, res) {
     })
 })
 }
+app.get('/user/retrieve/similarPhotos', function(req, res){
+
+  console.log('in server similarPhotos =================', req.query.urls)
+  var allInfo = [];
+  req.query.urls.map(url=>watsonFunctions.runVisualRecognition(url, function(data) {
+    console.log('got data from Watson!!!!', data, data.custom_classes),
+    allInfo.push(data)
+    if(allInfo.length === req.query.urls.length) {
+      console.log('all info', allInfo)
+      res.send(allInfo)
+    }
+
+
+  }))
+  
+});
+
 
 app.get('/user/recommendations', function(req, res){
+  getPhotos(req, res)
+
+});
+
+app.get('/user/retrieve/', function(req, res){
   getPhotos(req, res)
 
 });

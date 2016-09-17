@@ -65228,6 +65228,7 @@
 	        type: 'SELECTED_MEMLYS',
 	        selection: this.pages
 	      });
+
 	      var path = '/addcaptions';
 	      _reactRouter.hashHistory.push(path);
 	    }
@@ -65389,6 +65390,19 @@
 	      });
 	      var path = '/recommendations';
 	      _reactRouter.hashHistory.push(path);
+
+	      console.log('this.props.selection', this.props.selection);
+
+	      _axios2.default.get('/user/retrieve/similarPhotos', { params: { urls: this.props.selection.map(function (page) {
+	            return page.imgUrl;
+	          }) } }).then(function (res) {
+	        console.log('similarPhotos', res);
+	        var data = res.data.map(function (image) {
+	          return image.images[0].classifiers[0].classes;
+	        });
+	        console.log('data', data);
+	      });
+	      // return image.images[0].classes.map(class =>{ return class['class']})
 	    }
 	  }, {
 	    key: 'addCaption',
@@ -65905,8 +65919,6 @@
 	        var context = this;
 	        // console.log('dani', this.props.location)
 	        _axios2.default.get('/user/recommendations', { params: { location: location } }).then(function (res) {
-	          // https://c1.staticflickr.com/83/250384910_e540fceb2f_o.jpg
-	          // https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}_[mstzb].jpg
 
 	          var urlList = res.data.photos.photo.map(function (photo) {
 	            return 'http://c' + photo.farm + '.staticflickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '.jpg';
