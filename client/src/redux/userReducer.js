@@ -114,12 +114,19 @@ const userInitialState = {
   selection: [],
   pageIndex: 0,
   currentJourney: {},
+  recommendations: []
 }
 
 // ------------ USER REDUCER -----------------//
 export default function userReducer (state = userInitialState, action) {
   switch(action.type){
 
+   case 'PHOTO_RECOMMENDATIONS' : {
+     return {
+       ...state, 
+       recommendations: action.recommendations
+     }
+   }
    case 'USER_LIST_MEMLYS' : {
      return {
        ...state, 

@@ -21583,12 +21583,17 @@
 
 	var _titleContainer2 = _interopRequireDefault(_titleContainer);
 
+	var _container9 = __webpack_require__(674);
+
+	var _container10 = _interopRequireDefault(_container9);
+
 	var _axios = __webpack_require__(241);
 
 	var _axios2 = _interopRequireDefault(_axios);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	//File contains the route setup to be exported to be used by App.js
 	var routes = _react2.default.createElement(
 	  _reactRouter.Router,
 	  { history: _reactRouter.hashHistory },
@@ -21607,6 +21612,7 @@
 	    _react2.default.createElement(_reactRouter.Route, { path: '/photo', component: _ImageUploadContainer2.default }),
 	    _react2.default.createElement(_reactRouter.Route, { path: '/selection', component: _container4.default }),
 	    _react2.default.createElement(_reactRouter.Route, { path: '/addcaptions', component: _container6.default }),
+	    _react2.default.createElement(_reactRouter.Route, { path: '/recommendations', component: _container10.default }),
 	    _react2.default.createElement(
 	      _reactRouter.Route,
 	      { component: _container8.default },
@@ -21617,7 +21623,6 @@
 
 	// you can use an onEnter hook before entering routes to check if user is authorized. (i.e. can check the state logged in or not)
 	// this is a good way to do client side route protection. Without this, although they may not be able to see any of their data, anyone can still enter /user/profile route
-	//File contains the route setup to be exported to be used by App.js
 	function checkAuth(nextState, replace, callback) {
 	  //the fact that we have been rerouted by server to here means that we are authorized to be here
 	  //but what if someone manually enters.. 'https:localhost:3000/user/profile'?
@@ -31149,7 +31154,8 @@
 	  allMemlys: [],
 	  selection: [],
 	  pageIndex: 0,
-	  currentJourney: {}
+	  currentJourney: {},
+	  recommendations: []
 	};
 
 	// ------------ USER REDUCER -----------------//
@@ -31159,6 +31165,12 @@
 
 	  switch (action.type) {
 
+	    case 'PHOTO_RECOMMENDATIONS':
+	      {
+	        return _extends({}, state, {
+	          recommendations: action.recommendations
+	        });
+	      }
 	    case 'USER_LIST_MEMLYS':
 	      {
 	        return _extends({}, state, {
@@ -65375,7 +65387,7 @@
 	        type: 'SELECTED_MEMLYS',
 	        selection: this.props.selection
 	      });
-	      var path = '/addtitle';
+	      var path = '/recommendations';
 	      _reactRouter.hashHistory.push(path);
 	    }
 	  }, {
@@ -65782,6 +65794,229 @@
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Title2Container);
+
+/***/ },
+/* 674 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(174);
+
+	var _reactAddonsShallowCompare = __webpack_require__(583);
+
+	var _reactAddonsShallowCompare2 = _interopRequireDefault(_reactAddonsShallowCompare);
+
+	var _reactControllables = __webpack_require__(585);
+
+	var _reactControllables2 = _interopRequireDefault(_reactControllables);
+
+	var _googleMapReact = __webpack_require__(631);
+
+	var _googleMapReact2 = _interopRequireDefault(_googleMapReact);
+
+	var _reactAddonsUpdate = __webpack_require__(663);
+
+	var _reactAddonsUpdate2 = _interopRequireDefault(_reactAddonsUpdate);
+
+	var _axios = __webpack_require__(241);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	var _reactRedux = __webpack_require__(263);
+
+	var _App = __webpack_require__(1);
+
+	var _App2 = _interopRequireDefault(_App);
+
+	var _presentation = __webpack_require__(675);
+
+	var _presentation2 = _interopRequireDefault(_presentation);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } //need to look into use for this... allows you to control prop types somehow...
+
+
+	var RecommendationContainer = function (_Component) {
+	  _inherits(RecommendationContainer, _Component);
+
+	  function RecommendationContainer(props) {
+	    _classCallCheck(this, RecommendationContainer);
+
+	    return _possibleConstructorReturn(this, (RecommendationContainer.__proto__ || Object.getPrototypeOf(RecommendationContainer)).call(this, props));
+	  }
+
+	  _createClass(RecommendationContainer, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {}
+	  }, {
+	    key: 'geolocate',
+	    value: function geolocate(callback) {
+	      var _this2 = this;
+
+	      if (navigator.geolocation) {
+	        // Assign interval to "window.geolocator" so we can clear the interval later if needed
+	        navigator.geolocation.getCurrentPosition(function (position) {
+	          // Log coordinates for development
+	          // if (process.env.NODE_ENV === 'development') {
+	          console.log('omggg', position.coords.latitude, position.coords.longitude);
+	          // };
+	          callback({
+	            lat: position.coords.latitude,
+	            lng: position.coords.longitude
+	          });
+	          _this2.props.dispatch({
+	            type: 'UPDATE_USER_LOCATION',
+	            userLocation: {
+	              lat: position.coords.latitude,
+	              lon: position.coords.longitude
+	            } });
+	        }, function () {
+	          // Error handler for "navigator.geolocation.getCurrentPosition()"
+	          // Clear further geolocation's upon failure so we don't get repeat errors
+	          if (window.geolocator) {
+	            window.clearInterval(window.geolocator);
+	          };
+	          console.error('Geolocation failed');
+	        });
+	      } else {
+	        console.error('Your browser doesn\'t support geolocation');
+	      }
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.geolocate(function (location) {
+	        var context = this;
+	        // console.log('dani', this.props.location)
+	        _axios2.default.get('/user/recommendations', { params: { location: location } }).then(function (res) {
+	          // https://c1.staticflickr.com/83/250384910_e540fceb2f_o.jpg
+	          // https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}_[mstzb].jpg
+
+	          var urlList = res.data.photos.photo.map(function (photo) {
+	            return 'http://c' + photo.farm + '.staticflickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '.jpg';
+	          });
+	          _App2.default.dispatch({
+	            type: 'PHOTO_RECOMMENDATIONS',
+	            recommendations: urlList
+	          });
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'submit',
+	    value: function submit(e) {
+	      console.log('in submit');
+	      this.props.dispatch({
+	        type: 'SELECTED_MEMLYS',
+	        selection: this.props.selection
+	      });
+	      var path = '/addtitle';
+	      _reactRouter.hashHistory.push(path);
+	    }
+	  }, {
+	    key: 'addCaption',
+	    value: function addCaption(e, url, order) {
+	      var page = this.props.selection[order];
+	      page.caption = e.target.value;
+	    }
+	    // {this.props.selection && this.props.selection.map((page, index)=> <CaptionPresentation url={page.imgUrl} order={index} addCaption={this.addCaption.bind(this)}/>)}
+
+
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'ProfileBoxes' },
+	        _react2.default.createElement(
+	          'button',
+	          { type: 'submit', className: 'editProfileButton\'', value: 'submit', onClick: this.submit.bind(this), ref: function ref(c) {
+	              return _this3.button = c;
+	            } },
+	          'Submit'
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'MemlysContainer' },
+	          this.props.recommendations && this.props.recommendations.map(function (rec) {
+	            return _react2.default.createElement(_presentation2.default, { url: rec });
+	          })
+	        )
+	      );
+	    }
+	  }]);
+
+	  return RecommendationContainer;
+	}(_react.Component);
+
+	function mapStateToProps(state) {
+	  return {
+	    recommendations: state.userReducer.recommendations,
+	    // location: state.userReducer.userLocation,
+	    selection: state.userReducer.selection
+	  };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(RecommendationContainer);
+
+/***/ },
+/* 675 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _googleMapReact = __webpack_require__(631);
+
+	var _googleMapReact2 = _interopRequireDefault(_googleMapReact);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var RecommendationPresentation = function RecommendationPresentation(props) {
+	  console.log('url', props.url);
+	  // href="https://www.flickr.com/services/oembed?url&#x3D;
+	  var divStyle = {
+	    backgroundImage: 'url(' + props.url + ')',
+	    backgroundSize: 'cover',
+	    backgroundPosition: 'center',
+	    backgroundRepeat: 'no-repeat'
+	  };
+
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'oneMemly', style: divStyle, 'data-url': props.url, 'data-selected': 'false', onClick: function onClick(e) {
+	        return props.select(e);
+	      } },
+	    _react2.default.createElement('div', { className: 'oneMemlyWrapper' })
+	  );
+	};
+
+	exports.default = RecommendationPresentation;
 
 /***/ }
 /******/ ]);

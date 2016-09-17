@@ -17,6 +17,10 @@ var db = require('../db/database.js');
 var helper = require('./helperFunctions.js');
 var createAndSaveNewJourney = require('../db/journey/journeyUtils.js').createAndSaveNewJourney;
 var Journey = require('../db/journey/journeyModel').journeyModel;
+var watson = require('watson-developer-cloud');
+var watsonKeys = require('../db/watson/keys.js');
+var GoogleMap = require('google-map-react');
+
 //------ instantiate app. connect middleware. -----//
 var app = express();
 var cookieParser = require('cookie-parser'); // the session is stored in a cookie, so we use this to parse it
@@ -26,6 +30,7 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(morgan('dev'));
 app.use(bodyParser.json());
+var request = require('request');
 app.use(function(req, res, next) {
   // if now() is after `req.session.cookie.expires`
   //   regenerate the session
@@ -36,12 +41,96 @@ app.use(function(req, res, next) {
   next();
 });
 
+// request({
+//   method: 'POST', 
+//   url: 'https://gateway-a.watsonplatform.net/calls/url/URLGetEmotion',
+//   qs: {apikey: watsonKeys, }
+// }
+console.log('egg', watsonKeys.flickerKey.Key)
 
-// Configure our server with the passport middleware
+request({
+    url: 'http://api.flickr.com/services/rest/?',
+    method: 'flickr.places.find',
+    qs: { //URL to hit
+    // qs: {}
+    api_key: watsonKeys.flickerKey.Key,
+    query: 'San Francisco'},
+    // method: 'GET'
+  }, function (error, response, body) {
+    // if (!error && response.statusCode == 200) {
+        console.log('danni', response); // Show the HTML for the Modulus homepage.
+    // }
+});
+
+// var getLocation = function(req, res, next) {
+//   console.log('waaaaaaattt')
+//   var userID = req.session.passport.user['_id'];
+//   User.findOne({_id: userID})
+//   .exec(function(err, user) {
+//     console.log('uuuuuuuser', user.meta.lastLogInLocation)
+//     req.location = {
+//       lat: user.meta.lastLogInLocation.lat,
+//       lng: user.meta.lastLogInLocation.lng,
+//     }
+//   })
+//   next();
+// }
+var getPhotos = function(req, res) {
+  console.log('GOT LAT LONG', req.query.location);
+  var location = req.query.location;
+  request({
+    url: 'https://api.flickr.com/services/rest/?', 
+    qs: {method: 'flickr.places.findByLatLon', api_key: watsonKeys.flickerKey.Key, lon: location.lon, lat: location.lat}
+    // method=flickr.places.find&api_key=cbfb84b23a5a7af2a0bf27cc8a87d85b&query=san+francisco',
+    // method: 'GET'
+  }, function (error, response, body) {
+    // if (!error && response.statusCode == 200) {
+      var start = body.indexOf('woeid');
+      var woeid = body.slice(start +7, start + 15);
+
+    request({
+        url: 'https://api.flickr.com/services/rest/?', 
+        qs: {method: 'flickr.photos.search', 
+        api_key: watsonKeys.flickerKey.Key, 
+        woeid: woeid, 
+        text: 'fun egg', 
+        radius: 1,
+        format: 'json',
+        radius_units: 'mi',
+        sort: 'relevance',
+        per_page: 20,
+        page: 1,
+        nojsoncallback: 1
+      }
+      }, function (error, response, body) {
+        res.send(body)
+        // if (!error && response.statusCode == 200) {
+            console.log('eggieeggie', body); // Show the HTML for the Modulus homepage.
+        // }
+    })
+})
+}
+
+app.get('/user/recommendations', function(req, res){
+  getPhotos(req, res)
+
+});
+  // meta: {
+  //   lastLogInLocation: {
+  //     lat: Number,
+  //     lng: Number
+  //   },
+// navigator.geolocation.getCurrentPosition((position) => {
+//   // Log coordinates for development
+//   if (process.env.NODE_ENV === 'development') {
+//     console.log('=====================',position.coords.latitude, position.coords.longitude);
+//   };
+// })
+// URL: https://api.flickr.com/services/rest/?method=flickr.places.findByLatLon&api_key=cbfb84b23a5a7af2a0bf27cc8a87d85b&lat=37.747&lon=-122.439&format=rest&api_sig=3c3f7e25245c955acd55e870f57cf739
 
 
-// This runs our app through some middleware that allows saving to our database
-// CURRENTLY JUST IMAGES ARE CONFIGURED TO BE SAVED
+
+
 require('./../db/database').app(app);
 
 //--- route config ----- //
@@ -69,6 +158,7 @@ app.get('/auth/facebook', passport.authenticate('facebook', { scope: authConfig.
 // authentication has failed.
 
 app.get('/', helper.isLoggedIn, function(req, res) {
+  debugger;
   console.log('AM I HITTING APP.GET?????');
   res.render('index');
 });

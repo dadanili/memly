@@ -26,7 +26,7 @@ class CaptionContainer extends Component {
         type: 'SELECTED_MEMLYS', 
         selection: this.props.selection
     })
-    const path = '/addtitle'
+    const path = '/recommendations'
     hashHistory.push(path)
     
   }
